@@ -19,6 +19,7 @@ public class ParkingSpotDAO {
     public int getNextAvailableSlot(ParkingType parkingType){
         Connection con = null;
         int result=-1;
+        //this"try" is not working -> the catch is being triggered when car or bike is selected
         try {
             con = dataBaseConfig.getConnection();
             PreparedStatement ps = con.prepareStatement(DBConstants.GET_NEXT_PARKING_SPOT);
