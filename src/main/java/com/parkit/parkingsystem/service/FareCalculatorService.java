@@ -25,7 +25,7 @@ public class FareCalculatorService {
 	long differenceInMinutes = timeParked.toMinutes();
 	double duration = (double) differenceInMinutes / 60;
 	
-	// TODO: make parking free under 30min
+	//added free 30 min parking by setting parking  duration to 0 if duration under 30min.
 	if (duration < 0.50) duration = 0.0;
 
 	switch (ticket.getParkingSpot().getParkingType()) {

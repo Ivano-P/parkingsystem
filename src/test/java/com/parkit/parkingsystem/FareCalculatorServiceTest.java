@@ -128,7 +128,7 @@ public class FareCalculatorServiceTest {
     @Test
     public void checkThatFareIsFreeWithLessThanthirtyMinrParkingTime() {
         Date inTime = new Date();
-        inTime.setTime( System.currentTimeMillis() - (20 * 60 * 1000) );//24 hours parking time should give 24 * parking fare per hour
+        inTime.setTime( System.currentTimeMillis() - (20 * 60 * 1000) );//20 mins parking time should be free.
         Date outTime = new Date(); 
         ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE,false);
       
