@@ -10,7 +10,7 @@ import com.parkit.parkingsystem.model.Ticket;
 
 public class FareCalculatorService {
 
-    public void calculateFare(Ticket ticket) {
+    public void calculateFare(Ticket ticket, boolean isRecurringCustomer) {
 	if ((ticket.getInTime() == null) || (ticket.getOutTime().before(ticket.getInTime()))) {
 	    throw new IllegalArgumentException("Out time provided is incorrect:" + ticket.getOutTime().toString());
 	}
@@ -30,12 +30,24 @@ public class FareCalculatorService {
 
 	switch (ticket.getParkingSpot().getParkingType()) {
 	case CAR: {
-	    ticket.setPrice(duration * Fare.CAR_RATE_PER_HOUR);
-	    break;
+	    if (isRecurringCustomer) {
+		ticket.setPrice(duration * Fare.CAR_RATE_PER_HOUR*Fare.FIVE_PERCENT_DISCOUNT_MULTIPLIER);//adds 5% discount is vehicle had already used parking
+		break;
+	    }else {
+		ticket.setPrice(duration * Fare.CAR_RATE_PER_HOUR);
+		break;
+	    }
+	    
 	}
 	case BIKE: {
-	    ticket.setPrice(duration * Fare.BIKE_RATE_PER_HOUR);
-	    break;
+	    if (isRecurringCustomer) {
+		ticket.setPrice(duration * Fare.BIKE_RATE_PER_HOUR * Fare.FIVE_PERCENT_DISCOUNT_MULTIPLIER);//adds 5% discount is vehicle had already used parking
+		break;
+	    }else {
+		ticket.setPrice(duration * Fare.BIKE_RATE_PER_HOUR);
+		break;
+	    }
+	    
 	}
 	default:
 	    throw new IllegalArgumentException("Unkown Parking Type");
