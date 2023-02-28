@@ -88,6 +88,7 @@ public class TicketDAO {
 	return false;
     }
 
+    //check the DB for a ticket with the same registration number and an in and out time registered. -> custommer has already used the parking
     public boolean checkRecurringCustomer(String vehicleRegNumber) {
 	Connection con = null;
 	try {
@@ -106,6 +107,27 @@ public class TicketDAO {
 	    dataBaseConfig.closeConnection(con);
 	}
 	return false;
-
     }
+    
+    //check the DB for a ticket with the same registration number and has an in-time but no out-time
+    public boolean checkVehileIsInParking(String vehicleRegNumber) {
+	Connection con = null;
+	try {
+	    con = dataBaseConfig.getConnection();
+	    PreparedStatement ps = con.prepareStatement(DBConstants.CHECK_IF_VEHICLE_ALREADY_IN_PARKING);
+	    ps.setString(1, vehicleRegNumber);
+	    ResultSet rs = ps.executeQuery();
+	    if (rs.next()) {
+		return true;
+	    } else {
+		return false;
+	    }
+	} catch (Exception ex) {
+	    logger.error("Error checking if vehicle already in parking", ex);
+	} finally {
+	    dataBaseConfig.closeConnection(con);
+	}
+	return false;
+    }
+    
 }

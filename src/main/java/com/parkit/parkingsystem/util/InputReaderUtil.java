@@ -1,10 +1,13 @@
 package com.parkit.parkingsystem.util;
 
+import java.util.Scanner;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Scanner;
+import com.parkit.parkingsystem.annotation.testExclusionGenerated;
 
+@testExclusionGenerated
 public class InputReaderUtil {
 
     private static Scanner scan = new Scanner(System.in);

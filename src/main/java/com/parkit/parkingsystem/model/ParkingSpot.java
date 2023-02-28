@@ -1,7 +1,9 @@
 package com.parkit.parkingsystem.model;
 
 import com.parkit.parkingsystem.constants.ParkingType;
+import com.parkit.parkingsystem.annotation.testExclusionGenerated;
 
+@testExclusionGenerated
 public class ParkingSpot {
     private int number;
     private ParkingType parkingType;

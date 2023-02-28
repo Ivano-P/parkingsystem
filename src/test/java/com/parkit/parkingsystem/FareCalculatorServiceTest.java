@@ -126,7 +126,7 @@ public class FareCalculatorServiceTest {
     }
     
     @Test
-    public void checkThatFareIsFreeWithLessThanthirtyMinrParkingTime() {
+    public void checkThatFareIsFreeWithLessThanThirtyMinParkingTime() {
         Date inTime = new Date();
         inTime.setTime( System.currentTimeMillis() - (20 * 60 * 1000) );//20 mins parking time should be free.
         Date outTime = new Date(); 

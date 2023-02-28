@@ -1,7 +1,9 @@
 package com.parkit.parkingsystem.model;
 
 import java.util.Date;
+import com.parkit.parkingsystem.annotation.testExclusionGenerated;
 
+@testExclusionGenerated
 public class Ticket {
     private int id;
     private ParkingSpot parkingSpot;
