@@ -1,7 +1,6 @@
 package com.parkit.parkingsystem.integration;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 import java.sql.Connection;
@@ -60,7 +59,7 @@ public class ParkingDataBaseIT {
 	ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
 	parkingService.processIncomingVehicle();
 	int parkingNumber = -1;
-	boolean parkingSpotAvailable;
+	boolean parkingSpotAvailable;	
 	Connection con = null;
 	try {
 	    // check that ticket had been saved in DB
@@ -68,17 +67,15 @@ public class ParkingDataBaseIT {
 	    PreparedStatement ps = con.prepareStatement("SELECT * FROM ticket WHERE VEHICLE_REG_NUMBER = ? ;");
 	    ps.setString(1, inputReaderUtil.readVehicleRegistrationNumber());
 	    ResultSet rs = ps.executeQuery();
-	    if (rs.next()) {
-		System.out.println("ticket was correctly saved in DB");
-	    } else {
-		System.out.println("error adding ticket to DB");
+	    boolean hasTicket = rs.next();
+	    if (hasTicket) {
+		    assertThat(rs.getTimestamp("IN_TIME")).isNotNull();
+		    assertThat(rs.getString("VEHICLE_REG_NUMBER")).isEqualTo(inputReaderUtil.readVehicleRegistrationNumber());
+		    System.out.println("ticket was correctly saved in DB \n");		   
 	    }
-	    // assert that in time is not null and ticket regnumber = input number
-	    // assertTrue(rs.next());
-
 	} catch (Exception e) {
 	    e.printStackTrace();
-	    System.out.println("Failed to check that ticket had been saved in DB");
+	    System.out.println("Failed to check that ticket had been saved in DB \n");
 	} finally {
 	    dataBaseTestConfig.closeConnection(con);
 	}
@@ -94,15 +91,14 @@ public class ParkingDataBaseIT {
 		parkingNumber = rs2.getInt("PARKING_NUMBER");
 	    }
 
-	    // check parking to confirme that parkingspot is now unavailable
+	    // then check parking to confirme that parkingspot is now unavailable
 	    PreparedStatement ps3 = con.prepareStatement("SELECT AVAILABLE FROM parking WHERE PARKING_NUMBER = ? ;");
 	    ps3.setInt(1, parkingNumber);
 	    ResultSet rs3 = ps3.executeQuery();
-	    if (rs3.next()) {
-		// assertFalse(rs3.getBoolean(1));
+	    boolean hasParking = rs3.next();
+	    if (hasParking) {		
 		parkingSpotAvailable = rs3.getBoolean("AVAILABLE");
-		assertFalse(parkingSpotAvailable);
-		// TODO: creer une liste avec l'heure d'entré et bool avalable slot et tester contre une liste ou on passe les valeures réels attendu.
+		assertThat(parkingSpotAvailable).isFalse();		
 	    }
 	} catch (Exception e) {
 	    e.printStackTrace();
@@ -112,24 +108,27 @@ public class ParkingDataBaseIT {
 	}
     }
 
+    // check that the fare generated and out time are populated correctly in the database
     @Test
     public void testParkingLotExit() throws Exception {
 	ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
 	testParkingACar();
-	parkingService.processExitingVehicle();
-	// TODO: check that the fare generated and out time are populated correctly in the database
+	Thread.sleep(1000);
+	parkingService.processExitingVehicle();	
 	Connection con = null;
 	try {
 	    con = dataBaseTestConfig.getConnection();
 	    PreparedStatement ps = con
-		    .prepareStatement("SELECT OUT_TIME, PRICE FROM ticket WHERE VEHICLE_REG_NUMBER = ? ;");
+		    .prepareStatement("SELECT OUT_TIME, PRICE FROM ticket WHERE VEHICLE_REG_NUMBER = ? ;");	
 	    ps.setString(1, inputReaderUtil.readVehicleRegistrationNumber());
 	    ResultSet rs = ps.executeQuery();
-	    assertTrue(rs.next());
-	    // TODO:assert out_time is not null and price is => 0.
-	    System.out.println(rs.getDate("OUT_TIME"));
-	    System.out.println(rs.getDouble("PRICE"));
-	    
+	    boolean hasTicketWithOutTimeAndPrice;
+	    hasTicketWithOutTimeAndPrice = rs.next();	    
+	    if (hasTicketWithOutTimeAndPrice){
+		assertThat(rs.getDate("OUT_TIME")).isNotNull();
+		assertThat(rs.getDouble("PRICE")).isGreaterThanOrEqualTo(0);
+	    }
+	    System.out.println("fare generated and out time populated correctly");	    
 	} catch (Exception e) {
 	    e.printStackTrace();
 	    System.out.println("Failed to check if outtime and price populated in database");

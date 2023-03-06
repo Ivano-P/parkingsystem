@@ -5,9 +5,9 @@ import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 
-import com.parkit.parkingsystem.annotation.testExclusionGenerated;
+import com.parkit.parkingsystem.annotation.TestExclusionGenerated;
 
-@testExclusionGenerated
+@TestExclusionGenerated
 public class DataBaseConfig {
 
     private static final Logger logger = LogManager.getLogger("DataBaseConfig");

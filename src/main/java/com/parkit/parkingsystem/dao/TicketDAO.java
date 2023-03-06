@@ -96,7 +96,8 @@ public class TicketDAO {
 	    PreparedStatement ps = con.prepareStatement(DBConstants.CHECK_IF_RECURRING_CUSTOMER);
 	    ps.setString(1, vehicleRegNumber);
 	    ResultSet rs = ps.executeQuery();
-	    if (rs.next()) {
+	    boolean hasTicketWithInAndOutTime = rs.next();
+	    if (hasTicketWithInAndOutTime) {
 		return true;
 	    } else {
 		return false;

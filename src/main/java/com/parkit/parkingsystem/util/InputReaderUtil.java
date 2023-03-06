@@ -5,9 +5,9 @@ import java.util.Scanner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.parkit.parkingsystem.annotation.testExclusionGenerated;
+import com.parkit.parkingsystem.annotation.TestExclusionGenerated;
 
-@testExclusionGenerated
+@TestExclusionGenerated
 public class InputReaderUtil {
 
     private static Scanner scan = new Scanner(System.in);

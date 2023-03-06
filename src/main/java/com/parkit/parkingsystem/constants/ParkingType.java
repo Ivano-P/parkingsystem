@@ -1,7 +1,7 @@
 package com.parkit.parkingsystem.constants;
-import com.parkit.parkingsystem.annotation.testExclusionGenerated;
+import com.parkit.parkingsystem.annotation.TestExclusionGenerated;
 
-@testExclusionGenerated
+@TestExclusionGenerated
 public enum ParkingType {
     CAR,
     BIKE
