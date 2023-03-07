@@ -176,8 +176,8 @@ public class FareCalculatorServiceTest {
     }
 
     @Test
-    @DisplayName("test that five percent discount is applied if vehicle has previous ticket with in-time and out-time ")
-    public void checkThatFivePerCentDiscountIsAppliedIfIsRecurringCustumerTest() {
+    @DisplayName("test that five percent discount is applied if bike has previous ticket with in-time and out-time ")
+    public void checkThatFivePerCentDiscountIsAppliedIfIsRecurringBikeIsRecurringCustumerTest() {
 	//GIVEN
         inTime.setTime( System.currentTimeMillis() - (60 * 60 * 1000) );//60 min parking at bike rate should be 1.
         Date outTime = new Date(); 
