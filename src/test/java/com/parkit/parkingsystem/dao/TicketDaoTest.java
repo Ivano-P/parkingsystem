@@ -186,7 +186,7 @@ class TicketDaoTest {
     }
 
     @Test
-    public void testIfVehicleIsInParkingTest() {
+    public void  testIfVehicleIsInParking() {
 	// GIVEN
 	String vehicleRegNumber = "ABC6";
 	parkingSpot = new ParkingSpot(1, ParkingType.CAR, true);
