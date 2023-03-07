@@ -145,7 +145,7 @@ class TicketDaoTest {
 
             dataBaseTestConfig.closePreparedStatement(ps);
         } catch (Exception e) {
-            System.out.println("Error saving or retrieving ticket from DB: " + e);
+            fail("Error saving or retrieving ticket from DB: " + e.getMessage());
         } finally {
             dataBaseTestConfig.closeConnection(con);
         }
@@ -188,7 +188,7 @@ class TicketDaoTest {
 	    dataBaseTestConfig.closePreparedStatement(ps1);
 	    dataBaseTestConfig.closePreparedStatement(ps2);
 	} catch(Exception e) {
-	    System.out.println("Error saving ticket to DB" + e );	    
+	    fail("Error saving ticket to DB" + e.getMessage() );	    
 	} finally {
 	    dataBaseTestConfig.closeConnection(con);
 	}
@@ -209,7 +209,7 @@ class TicketDaoTest {
 	    
 	    dataBaseTestConfig.closePreparedStatement(ps);
 	}catch(Exception e) {
-	    System.out.println("Error updating ticket in db" + e );	    
+	   fail("Error updating ticket in db" + e.getMessage() );	    
 	} finally {	    
 	    dataBaseTestConfig.closeConnection(con);
 	}	
@@ -235,7 +235,7 @@ class TicketDaoTest {
 	    
 	    dataBaseTestConfig.closePreparedStatement(ps);
 	}catch(Exception e) {
-	    System.out.println("Error updating ticket in db" + e );	    
+	    fail("Error updating ticket in db" + e.getMessage() );	    
 	} finally {	    
 	    dataBaseTestConfig.closeConnection(con);
 	}		
@@ -261,7 +261,7 @@ class TicketDaoTest {
 	    
 	    dataBaseTestConfig.closePreparedStatement(ps);
 	}catch(Exception e) {
-	    System.out.println("Error updating ticket in db" + e );	    
+	    fail("Error updating ticket in db" + e.getMessage() );	    
 	} finally {	    
 	    dataBaseTestConfig.closeConnection(con);
 	}
@@ -288,7 +288,7 @@ class TicketDaoTest {
 	    
 	    dataBaseTestConfig.closePreparedStatement(ps);
 	}catch(Exception e) {
-	    System.out.println("Error updating ticket in db" + e );	    
+	    fail("Error updating ticket in db" + e.getMessage() );	    
 	} finally {	    
 	    dataBaseTestConfig.closeConnection(con);
 	}

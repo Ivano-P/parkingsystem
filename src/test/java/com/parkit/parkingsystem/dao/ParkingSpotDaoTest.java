@@ -71,13 +71,11 @@ class ParkingSpotDaoTest {
 	//GIVEN
 	ParkingType car = ParkingType.CAR;
 	
+	//filling first car slot so its marked as unavailable
 	Connection con = null;
 	try {
 	    con = dataBaseTestConfig.getConnection();
 	    PreparedStatement ps = con.prepareStatement("UPDATE parking SET type = 'CAR', available = false ORDER BY parking_number LIMIT 1");	  
-	    //ps.setInt(1, 1);
-	    //ps.setString(2, car.toString());
-	    //ps.setBoolean(3, false);
 	    ps.executeUpdate();
 	    dataBaseTestConfig.closePreparedStatement(ps);
 	    } catch (Exception e) {
@@ -103,6 +101,7 @@ class ParkingSpotDaoTest {
 	//WHEN
 	parkingSpotDAO.updateParking(parkingSpot);
 	
+	//retreving first row in db from parking tablea
 	Connection con = null;
 	try {
 	    con = dataBaseTestConfig.getConnection();

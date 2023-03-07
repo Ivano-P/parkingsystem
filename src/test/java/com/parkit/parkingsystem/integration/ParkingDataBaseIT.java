@@ -1,6 +1,7 @@
 package com.parkit.parkingsystem.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
 import java.sql.Connection;
@@ -10,6 +11,7 @@ import java.sql.ResultSet;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -56,10 +58,13 @@ public class ParkingDataBaseIT {
 
     @Test
     public void testParkingACar() throws Exception {
+	// GIVEN
 	ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+
+	// WHEN
 	parkingService.processIncomingVehicle();
 	int parkingNumber = -1;
-	boolean parkingSpotAvailable;	
+	boolean parkingSpotAvailable;
 	Connection con = null;
 	try {
 	    // check that ticket had been saved in DB
@@ -69,9 +74,11 @@ public class ParkingDataBaseIT {
 	    ResultSet rs = ps.executeQuery();
 	    boolean hasTicket = rs.next();
 	    if (hasTicket) {
-		    assertThat(rs.getTimestamp("IN_TIME")).isNotNull();
-		    assertThat(rs.getString("VEHICLE_REG_NUMBER")).isEqualTo(inputReaderUtil.readVehicleRegistrationNumber());
-		    System.out.println("ticket was correctly saved in DB \n");		   
+		// THEN
+		assertThat(rs.getTimestamp("IN_TIME")).isNotNull();
+		assertThat(rs.getString("VEHICLE_REG_NUMBER"))
+			.isEqualTo(inputReaderUtil.readVehicleRegistrationNumber());
+		System.out.println("ticket was correctly saved in DB \n");
 	    }
 	} catch (Exception e) {
 	    e.printStackTrace();
@@ -82,23 +89,28 @@ public class ParkingDataBaseIT {
 
 	// check that Parking table is updated with availability
 	try {
-	    // first retreive parking number linked to vehicle reg number.
+	    // GIVEN
+	    // retreival of parking number linked to vehicle reg number.
 	    con = dataBaseTestConfig.getConnection();
-	    PreparedStatement ps2 = con.prepareStatement("SELECT PARKING_NUMBER FROM ticket WHERE VEHICLE_REG_NUMBER = ? ;");
+	    PreparedStatement ps2 = con
+		    .prepareStatement("SELECT PARKING_NUMBER FROM ticket WHERE VEHICLE_REG_NUMBER = ? ;");
 	    ps2.setString(1, inputReaderUtil.readVehicleRegistrationNumber());
 	    ResultSet rs2 = ps2.executeQuery();
 	    if (rs2.next()) {
 		parkingNumber = rs2.getInt("PARKING_NUMBER");
 	    }
 
-	    // then check parking to confirme that parkingspot is now unavailable
+	    // WHEN
+	    // check parking to confirme that parkingspot is now unavailable
 	    PreparedStatement ps3 = con.prepareStatement("SELECT AVAILABLE FROM parking WHERE PARKING_NUMBER = ? ;");
 	    ps3.setInt(1, parkingNumber);
 	    ResultSet rs3 = ps3.executeQuery();
 	    boolean hasParking = rs3.next();
-	    if (hasParking) {		
+	    if (hasParking) {
 		parkingSpotAvailable = rs3.getBoolean("AVAILABLE");
-		assertThat(parkingSpotAvailable).isFalse();		
+
+		// THEN
+		assertThat(parkingSpotAvailable).isFalse();
 	    }
 	} catch (Exception e) {
 	    e.printStackTrace();
@@ -108,30 +120,34 @@ public class ParkingDataBaseIT {
 	}
     }
 
-    // check that the fare generated and out time are populated correctly in the database
     @Test
+    @DisplayName("test that the fare generated and out-time are populated correctly in the database when prow")
     public void testParkingLotExit() throws Exception {
+	// GIVEN
 	ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+
+	// WHEN
 	testParkingACar();
 	Thread.sleep(1000);
-	parkingService.processExitingVehicle();	
+	parkingService.processExitingVehicle();
 	Connection con = null;
 	try {
 	    con = dataBaseTestConfig.getConnection();
 	    PreparedStatement ps = con
-		    .prepareStatement("SELECT OUT_TIME, PRICE FROM ticket WHERE VEHICLE_REG_NUMBER = ? ;");	
+		    .prepareStatement("SELECT OUT_TIME, PRICE FROM ticket WHERE VEHICLE_REG_NUMBER = ? ;");
 	    ps.setString(1, inputReaderUtil.readVehicleRegistrationNumber());
 	    ResultSet rs = ps.executeQuery();
 	    boolean hasTicketWithOutTimeAndPrice;
-	    hasTicketWithOutTimeAndPrice = rs.next();	    
-	    if (hasTicketWithOutTimeAndPrice){
+	    hasTicketWithOutTimeAndPrice = rs.next();
+	    if (hasTicketWithOutTimeAndPrice) {
+
+		// THEN
 		assertThat(rs.getDate("OUT_TIME")).isNotNull();
 		assertThat(rs.getDouble("PRICE")).isGreaterThanOrEqualTo(0);
 	    }
-	    System.out.println("fare generated and out time populated correctly");	    
+	    System.out.println("fare generated and out time populated correctly");
 	} catch (Exception e) {
-	    e.printStackTrace();
-	    System.out.println("Failed to check if outtime and price populated in database");
+	    fail("Failed to check if outtime and price populated in database" + e.getMessage());
 	} finally {
 	    dataBaseTestConfig.closeConnection(con);
 	}
