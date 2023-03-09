@@ -20,12 +20,10 @@ public class TicketDAO {
     public DataBaseConfig dataBaseConfig = new DataBaseConfig();
 
     public boolean saveTicket(Ticket ticket) {
-	Connection con = null;
-	try {
-	    con = dataBaseConfig.getConnection();
-	    PreparedStatement ps = con.prepareStatement(DBConstants.SAVE_TICKET);
+	try (Connection con = dataBaseConfig.getConnection();
+		PreparedStatement ps = con.prepareStatement(DBConstants.SAVE_TICKET)) {
 	    // ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
-	    ps.setInt(1,ticket.getId());
+	    ps.setInt(1, ticket.getId());
 	    ps.setInt(2, ticket.getParkingSpot().getId());
 	    ps.setString(3, ticket.getVehicleRegNumber());
 	    ps.setDouble(4, ticket.getPrice());
@@ -34,22 +32,18 @@ public class TicketDAO {
 	    return ps.execute();
 	} catch (Exception ex) {
 	    logger.error("Error fetching next available slot", ex);
-	} finally {
-	    dataBaseConfig.closeConnection(con);
-
 	}
 	return false;
     }
 
     public Ticket getTicket(String vehicleRegNumber) {
-	Connection con = null;
 	Ticket ticket = null;
-	try {
-	    con = dataBaseConfig.getConnection();
-	    PreparedStatement ps = con.prepareStatement(DBConstants.GET_TICKET);
+	ResultSet rs = null;
+	try (Connection con = dataBaseConfig.getConnection();
+		PreparedStatement ps = con.prepareStatement(DBConstants.GET_TICKET)) {
 	    // ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
 	    ps.setString(1, vehicleRegNumber);
-	    ResultSet rs = ps.executeQuery();
+	    rs = ps.executeQuery();
 	    if (rs.next()) {
 		ticket = new Ticket();
 		ParkingSpot parkingSpot = new ParkingSpot(rs.getInt(1), ParkingType.valueOf(rs.getString(6)), false);
@@ -61,20 +55,23 @@ public class TicketDAO {
 		ticket.setOutTime(rs.getTimestamp(5));
 	    }
 	    dataBaseConfig.closeResultSet(rs);
-	    dataBaseConfig.closePreparedStatement(ps);
 	} catch (Exception ex) {
 	    logger.error("Error fetching next available slot", ex);
 	} finally {
-	    dataBaseConfig.closeConnection(con);
+	    try {
+		if (rs != null) {
+		    rs.close();
+		}
+	    } catch (Exception ex) {
+		logger.error("Error closing result set", ex);
+	    }
 	}
 	return ticket;
     }
 
     public boolean updateTicket(Ticket ticket) {
-	Connection con = null;
-	try {
-	    con = dataBaseConfig.getConnection();
-	    PreparedStatement ps = con.prepareStatement(DBConstants.UPDATE_TICKET);
+	try (Connection con = dataBaseConfig.getConnection();
+		PreparedStatement ps = con.prepareStatement(DBConstants.UPDATE_TICKET)) {
 	    ps.setDouble(1, ticket.getPrice());
 	    ps.setTimestamp(2, new Timestamp(ticket.getOutTime().getTime()));
 	    ps.setInt(3, ticket.getId());
@@ -82,18 +79,15 @@ public class TicketDAO {
 	    return true;
 	} catch (Exception ex) {
 	    logger.error("Error saving ticket info", ex);
-	} finally {
-	    dataBaseConfig.closeConnection(con);
 	}
 	return false;
     }
 
-    //check the DB for a ticket with the same registration number and an in and out time registered. -> custommer has already used the parking
+    // check the DB for a ticket with the same registration number and an in and out
+    // time registered. -> custommer has already used the parking
     public boolean checkRecurringCustomer(String vehicleRegNumber) {
-	Connection con = null;
-	try {
-	    con = dataBaseConfig.getConnection();
-	    PreparedStatement ps = con.prepareStatement(DBConstants.CHECK_IF_RECURRING_CUSTOMER);
+	try (Connection con = dataBaseConfig.getConnection();
+		PreparedStatement ps = con.prepareStatement(DBConstants.CHECK_IF_RECURRING_CUSTOMER)) {
 	    ps.setString(1, vehicleRegNumber);
 	    ResultSet rs = ps.executeQuery();
 	    boolean hasTicketWithInAndOutTime = rs.next();
@@ -104,20 +98,18 @@ public class TicketDAO {
 	    }
 	} catch (Exception ex) {
 	    logger.error("Error checking if previous ticket with entry and exit date exist", ex);
-	} finally {
-	    dataBaseConfig.closeConnection(con);
 	}
 	return false;
     }
-    
-    //check the DB for a ticket with the same registration number and has an in-time but no out-time
+
+    // check the DB for a ticket with the same registration number and has an
+    // in-time but no out-time
     public boolean checkVehileIsInParking(String vehicleRegNumber) {
-	Connection con = null;
-	try {
-	    con = dataBaseConfig.getConnection();
-	    PreparedStatement ps = con.prepareStatement(DBConstants.CHECK_IF_VEHICLE_ALREADY_IN_PARKING);
+	ResultSet rs = null;
+	try (Connection con = dataBaseConfig.getConnection();
+		PreparedStatement ps = con.prepareStatement(DBConstants.CHECK_IF_VEHICLE_ALREADY_IN_PARKING)) {
 	    ps.setString(1, vehicleRegNumber);
-	    ResultSet rs = ps.executeQuery();
+	    rs = ps.executeQuery();
 	    if (rs.next()) {
 		return true;
 	    } else {
@@ -126,9 +118,15 @@ public class TicketDAO {
 	} catch (Exception ex) {
 	    logger.error("Error checking if vehicle already in parking", ex);
 	} finally {
-	    dataBaseConfig.closeConnection(con);
+	    try {
+		if (rs != null) {
+		    rs.close();
+		}
+	    } catch (Exception ex) {
+		logger.error("Error closing result set", ex);
+	    }
 	}
 	return false;
     }
-    
+
 }
