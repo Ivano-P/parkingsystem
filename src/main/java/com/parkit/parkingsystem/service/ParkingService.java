@@ -21,7 +21,7 @@ public class ParkingService {
     private ParkingSpotDAO parkingSpotDAO;
     private TicketDAO ticketDAO;
      
-    private boolean isRecurringCustomer; // to printe welcome message for recurring customers
+    private boolean isRecurringCustomer; // to printe welcome message for recurring customers and apply dicsount on processing exit
 
     public ParkingService(InputReaderUtil inputReaderUtil, ParkingSpotDAO parkingSpotDAO, TicketDAO ticketDAO){
         this.inputReaderUtil = inputReaderUtil;

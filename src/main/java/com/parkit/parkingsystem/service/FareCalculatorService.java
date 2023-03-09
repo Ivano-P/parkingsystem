@@ -17,7 +17,7 @@ public class FareCalculatorService {
 
 	Date arrivalDate = ticket.getInTime();
 	Date exitDate = ticket.getOutTime();
-
+	
 	LocalDateTime inTime = arrivalDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 	LocalDateTime outTime = exitDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 
@@ -36,8 +36,7 @@ public class FareCalculatorService {
 	    }else {
 		ticket.setPrice(duration * Fare.CAR_RATE_PER_HOUR);
 		break;
-	    }
-	    
+	    }	    
 	}
 	case BIKE: {
 	    if (isRecurringCustomer) {
@@ -46,8 +45,7 @@ public class FareCalculatorService {
 	    }else {
 		ticket.setPrice(duration * Fare.BIKE_RATE_PER_HOUR);
 		break;
-	    }
-	    
+	    }	    
 	}
 	default:
 	    throw new IllegalArgumentException("Unkown Parking Type");

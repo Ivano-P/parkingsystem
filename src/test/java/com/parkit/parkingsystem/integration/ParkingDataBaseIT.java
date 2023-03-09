@@ -55,7 +55,7 @@ public class ParkingDataBaseIT {
     }
 
     @Test
-    @DisplayName("that a ticket is saved in DB and Parking table is updated with availability")
+    @DisplayName("test that a ticket is saved in DB and Parking table is updated with availability")
     public void testParkingACar(){
 	//GIVEN
         ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
@@ -66,25 +66,23 @@ public class ParkingDataBaseIT {
         ParkingSpot parkingSpot = ticket.getParkingSpot();    
         //THEN
         assertThat(ticket.getVehicleRegNumber()).isEqualTo("ABCDEF");        
-        assertThat(parkingSpot.isAvailable()).isFalse();
-        
+        assertThat(parkingSpot.isAvailable()).isFalse();       
     }
 
     @Test
     @DisplayName("test that the fare generated and out time are populated correctly in the database")
     public void testParkingLotExit() throws Exception {
 	//GIVEN
-    	testParkingACar();
+	
     	ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+    	parkingService.processIncomingVehicle();
         Thread.sleep(500);//to pause between processing vehicle entrance and exit, to not creat issue with in-time and out-time being the same
         //WHEN
         parkingService.processExitingVehicle();
-        Ticket ticket = ticketDAO.getTicket("ABCDEF");     
+        Ticket ticket = ticketDAO.getTicket("ABCDEF"); 
         //THEN
         assertThat(ticket.getPrice()).isEqualTo(0);
+        assertThat(ticket.getOutTime()).isNotNull();  
         assertThat(parkingSpotDAO.getNextAvailableSlot(ParkingType.CAR)).isEqualTo(1);
-        assertThat(ticket.getOutTime()).isNotNull();
-    
     }
-
 }

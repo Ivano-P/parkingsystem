@@ -171,8 +171,7 @@ public class FareCalculatorServiceTest {
         //WHEN
         fareCalculatorService.calculateFare(ticket, isRecurringCustomer);
         //THEN
-	assertEquals (0.0, ticket.getPrice());
-	
+	assertEquals (0.0, ticket.getPrice());	
     }
 
     @Test
