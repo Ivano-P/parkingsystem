@@ -1,8 +1,5 @@
 package com.parkit.parkingsystem.constants;
 
-import com.parkit.parkingsystem.annotation.TestExclusionGenerated;
-
-@TestExclusionGenerated
 public class DBConstants {
 
     public static final String GET_NEXT_PARKING_SPOT = "select min(PARKING_NUMBER) from parking where AVAILABLE = true and TYPE = ?";
